@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,6 +11,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CategoriaController extends AbstractController
 {
+    private $logger;
+
+    public function __construct(LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
+
     // Con la anotacion Route establecemos el endpoint
     /**
      * @Route("/categoria/list" , name="categoria_list")
@@ -24,7 +31,6 @@ class CategoriaController extends AbstractController
         $response->setContent('<div> Hola Mundo </div>');
         return $response;
         */
-
 
         // Antes de montar el json capturamos el contenido del request
         $categoria = $request-> get('categoria');
@@ -49,6 +55,7 @@ class CategoriaController extends AbstractController
            ]
         ]);
 
+        $this->logger->info('List categorias matched!!!');
         return $response;
     }
 
