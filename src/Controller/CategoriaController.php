@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorias;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,6 +58,40 @@ class CategoriaController extends AbstractController
         ]);
 
         $this->logger->info('List categorias matched!!!');
+        return $response;
+    }
+
+    /**
+     * @Route ("/categoria", name="create_categoria")
+     */
+
+    public function createCategoria(Request $request, EntityManagerInterface $em){
+        $nombre = $request->get('categoria');
+        $response = new JsonResponse();
+        if (!$nombre) {
+            $response->setData([
+               'sucess' => false,
+               'data' => null,
+                'error' => 'Categoria name cant be null'
+            ]);
+            return $response;
+        }
+
+
+        $categoria = new Categorias();
+        $categoria->setCategoria($nombre);
+        $em->persist($categoria);
+        $em->flush();
+
+        $response->setData([
+            'success' => true,
+            'data' => [
+                [
+                    'id' => $categoria->getId(),
+                    'categoria' => $categoria->getCategoria()
+                ]
+            ]
+        ]);
         return $response;
     }
 
